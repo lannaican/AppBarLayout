@@ -102,7 +102,7 @@ public class AppBarLayout extends LinearLayout {
                     R.style.Widget_Design_AppBarLayout);
         }
 
-        final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FlingAppBarLayout,
+        final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.AppBarLayout,
                 0, R.style.Widget_Design_AppBarLayout);
         ViewCompat.setBackground(this, a.getDrawable(R.styleable.AppBarLayout_android_background));
         if (a.hasValue(R.styleable.AppBarLayout_expanded)) {
