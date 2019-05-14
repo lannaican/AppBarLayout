@@ -1,0 +1,4 @@
+<resources>
+    <string name="appbar_spring_behavior">com.star.view.appbarlayout.AppBarLayoutSpringBehavior</string>
+    <string name="fling_behavior">com.star.view.appbarlayout.AppBarLayout$ScrollingViewBehavior</string>
+</resources>
