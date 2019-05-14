@@ -49,60 +49,6 @@ import java.util.List;
 
 import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
-/**
- * AppBarLayout is a vertical {@link LinearLayout} which implements many of the features of
- * material designs app bar concept, namely scrolling gestures.
- * <p>
- * Children should provide their desired scrolling behavior through
- * {@link LayoutParams#setScrollFlags(int)} and the associated layout xml attribute:
- * {@code app:layout_scrollFlags}.
- * <p>
- * <p>
- * This view depends heavily on being used as a direct child within a {@link CoordinatorLayout}.
- * If you use AppBarLayout within a different {@link ViewGroup}, most of it's functionality will
- * not work.
- * <p>
- * AppBarLayout also requires a separate scrolling sibling in order to know when to scroll.
- * The binding is done through the {@link ScrollingViewBehavior} behavior class, meaning that you
- * should set your scrolling view's behavior to be an instance of {@link ScrollingViewBehavior}.
- * A string resource containing the full class name is available.
- * <p>
- * <pre>
- * &lt;android.support.design.widget.CoordinatorLayout
- *         xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
- *         xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;
- *         android:layout_width=&quot;match_parent&quot;
- *         android:layout_height=&quot;match_parent&quot;&gt;
- *
- *     &lt;android.support.v4.widget.NestedScrollView
- *             android:layout_width=&quot;match_parent&quot;
- *             android:layout_height=&quot;match_parent&quot;
- *             app:layout_behavior=&quot;@string/appbar_scrolling_view_behavior&quot;&gt;
- *
- *         &lt;!-- Your scrolling content --&gt;
- *
- *     &lt;/android.support.v4.widget.NestedScrollView&gt;
- *
- *     &lt;android.support.design.widget.AppBarLayout
- *             android:layout_height=&quot;wrap_content&quot;
- *             android:layout_width=&quot;match_parent&quot;&gt;
- *
- *         &lt;android.support.v7.widget.Toolbar
- *                 ...
- *                 app:layout_scrollFlags=&quot;scroll|enterAlways&quot;/&gt;
- *
- *         &lt;android.support.design.widget.TabLayout
- *                 ...
- *                 app:layout_scrollFlags=&quot;scroll|enterAlways&quot;/&gt;
- *
- *     &lt;/android.support.design.widget.AppBarLayout&gt;
- *
- * &lt;/android.support.design.widget.CoordinatorLayout&gt;
- * </pre>
- *
- * @see <a href="http://www.google.com/design/spec/layout/structure.html#structure-app-bar">
- * http://www.google.com/design/spec/layout/structure.html#structure-app-bar</a>
- */
 @CoordinatorLayout.DefaultBehavior(AppBarLayout.Behavior.class)
 public class AppBarLayout extends LinearLayout {
 
@@ -112,19 +58,7 @@ public class AppBarLayout extends LinearLayout {
     static final int PENDING_ACTION_ANIMATE_ENABLED = 0x4;
     static final int PENDING_ACTION_FORCE = 0x8;
 
-    /**
-     * Interface definition for a callback to be invoked when an {@link AppBarLayout}'s vertical
-     * offset changes.
-     */
     public interface OnOffsetChangedListener {
-        /**
-         * Called when the {@link AppBarLayout}'s layout offset has been changed. This allows
-         * child views to implement custom behavior based on the offset (for instance pinning a
-         * view at a certain y value).
-         *
-         * @param appBarLayout   the {@link AppBarLayout} which offset has changed
-         * @param verticalOffset the vertical offset for the parent {@link AppBarLayout}, in px
-         */
         void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset);
     }
 
@@ -168,7 +102,7 @@ public class AppBarLayout extends LinearLayout {
                     R.style.Widget_Design_AppBarLayout);
         }
 
-        final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.AppBarLayout,
+        final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FlingAppBarLayout,
                 0, R.style.Widget_Design_AppBarLayout);
         ViewCompat.setBackground(this, a.getDrawable(R.styleable.AppBarLayout_android_background));
         if (a.hasValue(R.styleable.AppBarLayout_expanded)) {
@@ -1359,10 +1293,7 @@ public class AppBarLayout extends LinearLayout {
         }
     }
 
-    /**
-     * Behavior which should be used by {@link View}s which can scroll vertically and support
-     * nested scrolling to automatically scroll any {@link AppBarLayout} siblings.
-     */
+
     public static class ScrollingViewBehavior extends HeaderScrollingViewBehavior {
 
         public ScrollingViewBehavior() {

@@ -19,7 +19,7 @@ import androidx.core.view.ViewCompat;
 
 import static androidx.core.view.ViewCompat.TYPE_NON_TOUCH;
 
-public class AppBarLayoutSpringBehavior extends AppBarLayout.Behavior {
+public class AppBarLayoutSpringBehavior extends FlingAppBarLayout.Behavior {
 
     private static final int MAX_OFFSET_ANIMATION_DURATION = 600; // ms
 
@@ -44,7 +44,7 @@ public class AppBarLayoutSpringBehavior extends AppBarLayout.Behavior {
     }
 
     @Override
-    public boolean onStartNestedScroll(CoordinatorLayout parent, AppBarLayout child, View directTargetChild, View target, int nestedScrollAxes, int type) {
+    public boolean onStartNestedScroll(CoordinatorLayout parent, FlingAppBarLayout child, View directTargetChild, View target, int nestedScrollAxes, int type) {
         final boolean started = super.onStartNestedScroll(parent, child, directTargetChild, target, nestedScrollAxes, type);
         if (started && mSpringRecoverAnimator != null && mSpringRecoverAnimator.isRunning()) {
             mSpringRecoverAnimator.cancel();
@@ -65,7 +65,7 @@ public class AppBarLayoutSpringBehavior extends AppBarLayout.Behavior {
 
 
     @Override
-    public void onNestedScroll(CoordinatorLayout coordinatorLayout, AppBarLayout child, View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type) {
+    public void onNestedScroll(CoordinatorLayout coordinatorLayout, FlingAppBarLayout child, View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type) {
         if (dyUnconsumed < 0) {
             setHeaderTopBottomOffset(coordinatorLayout, child,
                     getTopBottomOffsetForScrollingSibling() - dyUnconsumed, -child.getDownNestedScrollRange(), 0, type);
@@ -73,7 +73,7 @@ public class AppBarLayoutSpringBehavior extends AppBarLayout.Behavior {
     }
 
     @Override
-    public void onStopNestedScroll(CoordinatorLayout coordinatorLayout, AppBarLayout abl, View target, int type) {
+    public void onStopNestedScroll(CoordinatorLayout coordinatorLayout, FlingAppBarLayout abl, View target, int type) {
         super.onStopNestedScroll(coordinatorLayout, abl, target, type);
 
         if (type == TYPE_NON_TOUCH) {
@@ -82,11 +82,11 @@ public class AppBarLayoutSpringBehavior extends AppBarLayout.Behavior {
         checkShouldSpringRecover(coordinatorLayout, abl);
     }
 
-    private void checkShouldSpringRecover(CoordinatorLayout coordinatorLayout, AppBarLayout abl) {
+    private void checkShouldSpringRecover(CoordinatorLayout coordinatorLayout, FlingAppBarLayout abl) {
         if (mOffsetSpring > 0) animateRecoverBySpring(coordinatorLayout, abl);
     }
 
-    private void animateFlingSpring(final CoordinatorLayout coordinatorLayout, final AppBarLayout abl, int originNew) {
+    private void animateFlingSpring(final CoordinatorLayout coordinatorLayout, final FlingAppBarLayout abl, int originNew) {
         if (mFlingAnimator == null) {
             mFlingAnimator = new ValueAnimator();
             mFlingAnimator.setDuration(200);
@@ -113,7 +113,7 @@ public class AppBarLayoutSpringBehavior extends AppBarLayout.Behavior {
         mFlingAnimator.start();
     }
 
-    private void animateRecoverBySpring(final CoordinatorLayout coordinatorLayout, final AppBarLayout abl) {
+    private void animateRecoverBySpring(final CoordinatorLayout coordinatorLayout, final FlingAppBarLayout abl) {
         if (mSpringRecoverAnimator == null) {
             mSpringRecoverAnimator = new ValueAnimator();
             mSpringRecoverAnimator.setDuration(200);
@@ -138,7 +138,7 @@ public class AppBarLayoutSpringBehavior extends AppBarLayout.Behavior {
     }
 
     @Override
-    public boolean onMeasureChild(CoordinatorLayout parent, AppBarLayout child, int parentWidthMeasureSpec, int widthUsed, int parentHeightMeasureSpec, int heightUsed) {
+    public boolean onMeasureChild(CoordinatorLayout parent, FlingAppBarLayout child, int parentWidthMeasureSpec, int widthUsed, int parentHeightMeasureSpec, int heightUsed) {
         boolean b = super.onMeasureChild(parent, child, parentWidthMeasureSpec, widthUsed, parentHeightMeasureSpec, heightUsed);
         if (mPreHeadHeight == 0) {
             mPreHeadHeight = getHeaderExpandedHeight(child);
@@ -146,11 +146,11 @@ public class AppBarLayoutSpringBehavior extends AppBarLayout.Behavior {
         return b;
     }
 
-    int getHeaderExpandedHeight(AppBarLayout appBarLayout) {
+    int getHeaderExpandedHeight(FlingAppBarLayout appBarLayout) {
         int range = 0;
         for (int i = 0, z = appBarLayout.getChildCount(); i < z; i++) {
             final View child = appBarLayout.getChildAt(i);
-            final AppBarLayout.LayoutParams lp = (AppBarLayout.LayoutParams) child.getLayoutParams();
+            final FlingAppBarLayout.LayoutParams lp = (FlingAppBarLayout.LayoutParams) child.getLayoutParams();
             int childHeight = child.getMeasuredHeight();
             childHeight += lp.topMargin + lp.bottomMargin;
             range += childHeight;
@@ -159,20 +159,20 @@ public class AppBarLayoutSpringBehavior extends AppBarLayout.Behavior {
     }
 
     @Override
-    void onFlingFinished(CoordinatorLayout parent, AppBarLayout layout) {
+    void onFlingFinished(CoordinatorLayout parent, FlingAppBarLayout layout) {
         snapToChildIfNeeded(parent, layout);
         animateRecoverBySpring(parent, layout);
     }
 
-    private void snapToChildIfNeeded(CoordinatorLayout coordinatorLayout, AppBarLayout abl) {
+    private void snapToChildIfNeeded(CoordinatorLayout coordinatorLayout, FlingAppBarLayout abl) {
         final int offset = getTopBottomOffsetForScrollingSibling();
         final int offsetChildIndex = getChildIndexOnOffset(abl, offset);
         if (offsetChildIndex >= 0) {
             final View offsetChild = abl.getChildAt(offsetChildIndex);
-            final AppBarLayout.LayoutParams lp = (AppBarLayout.LayoutParams) offsetChild.getLayoutParams();
+            final FlingAppBarLayout.LayoutParams lp = (FlingAppBarLayout.LayoutParams) offsetChild.getLayoutParams();
             final int flags = lp.getScrollFlags();
 
-            if ((flags & AppBarLayout.LayoutParams.FLAG_SNAP) == AppBarLayout.LayoutParams.FLAG_SNAP) {
+            if ((flags & FlingAppBarLayout.LayoutParams.FLAG_SNAP) == FlingAppBarLayout.LayoutParams.FLAG_SNAP) {
                 // We're set the snap, so animate the offset to the nearest edge
                 int snapTop = -offsetChild.getTop();
                 int snapBottom = -offsetChild.getBottom();
@@ -182,11 +182,11 @@ public class AppBarLayoutSpringBehavior extends AppBarLayout.Behavior {
                     snapBottom += abl.getTopInset();
                 }
 
-                if (checkFlag(flags, AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED)) {
+                if (checkFlag(flags, FlingAppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED)) {
                     // If the view is set only exit until it is collapsed, we'll abide by that
                     snapBottom += ViewCompat.getMinimumHeight(offsetChild);
-                } else if (checkFlag(flags, AppBarLayout.LayoutParams.FLAG_QUICK_RETURN
-                        | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS)) {
+                } else if (checkFlag(flags, FlingAppBarLayout.LayoutParams.FLAG_QUICK_RETURN
+                        | FlingAppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS)) {
                     // If it's set to always enter collapsed, it actually has two states. We
                     // select the state and then snap within the state
                     final int seam = snapBottom + ViewCompat.getMinimumHeight(offsetChild);
@@ -207,7 +207,7 @@ public class AppBarLayoutSpringBehavior extends AppBarLayout.Behavior {
     }
 
     private void animateOffsetTo(final CoordinatorLayout coordinatorLayout,
-                                 final AppBarLayout child, final int offset, float velocity) {
+                                 final FlingAppBarLayout child, final int offset, float velocity) {
         final int distance = Math.abs(getTopBottomOffsetForScrollingSibling() - offset);
 
         final int duration;
@@ -223,7 +223,7 @@ public class AppBarLayoutSpringBehavior extends AppBarLayout.Behavior {
     }
 
     private void animateOffsetWithDuration(final CoordinatorLayout coordinatorLayout,
-                                           final AppBarLayout child, final int offset, final int duration) {
+                                           final FlingAppBarLayout child, final int offset, final int duration) {
         final int currentOffset = getTopBottomOffsetForScrollingSibling();
         if (currentOffset == offset) {
             if (mOffsetAnimator != null && mOffsetAnimator.isRunning()) {
@@ -251,7 +251,7 @@ public class AppBarLayoutSpringBehavior extends AppBarLayout.Behavior {
         mOffsetAnimator.start();
     }
 
-    private int getChildIndexOnOffset(AppBarLayout abl, final int offset) {
+    private int getChildIndexOnOffset(FlingAppBarLayout abl, final int offset) {
         for (int i = 0, count = abl.getChildCount(); i < count; i++) {
             View child = abl.getChildAt(i);
             if (child.getTop() <= -offset && child.getBottom() >= -offset) {
@@ -263,12 +263,12 @@ public class AppBarLayoutSpringBehavior extends AppBarLayout.Behavior {
 
     @Override
     int setHeaderTopBottomOffset(CoordinatorLayout coordinatorLayout,
-                                 AppBarLayout appBarLayout, int newOffset, int minOffset, int maxOffset) {
+                                 FlingAppBarLayout appBarLayout, int newOffset, int minOffset, int maxOffset) {
         return setHeaderTopBottomOffset(coordinatorLayout, appBarLayout, newOffset, minOffset, maxOffset, -1);
     }
 
     int setHeaderTopBottomOffset(CoordinatorLayout coordinatorLayout,
-                                 AppBarLayout appBarLayout, int newOffset, int minOffset, int maxOffset, int type) {
+                                 FlingAppBarLayout appBarLayout, int newOffset, int minOffset, int maxOffset, int type) {
         int originNew = newOffset;
         final int curOffset = getTopBottomOffsetForScrollingSibling();
         int consumed = 0;
@@ -314,7 +314,7 @@ public class AppBarLayoutSpringBehavior extends AppBarLayout.Behavior {
         return consumed;
     }
 
-    private int updateSpringByScroll(CoordinatorLayout coordinatorLayout, AppBarLayout appBarLayout, int type, int originNew) {
+    private int updateSpringByScroll(CoordinatorLayout coordinatorLayout, FlingAppBarLayout appBarLayout, int type, int originNew) {
         int consumed;
         if (appBarLayout.getHeight() >= mPreHeadHeight && type == 1) {
             if (mFlingAnimator == null)
@@ -332,24 +332,24 @@ public class AppBarLayoutSpringBehavior extends AppBarLayout.Behavior {
         return getTopAndBottomOffset() + mOffsetDelta;
     }
 
-    private int interpolateOffset(AppBarLayout layout, final int offset) {
+    private int interpolateOffset(FlingAppBarLayout layout, final int offset) {
         final int absOffset = Math.abs(offset);
 
         for (int i = 0, z = layout.getChildCount(); i < z; i++) {
             final View child = layout.getChildAt(i);
-            final AppBarLayout.LayoutParams childLp = (AppBarLayout.LayoutParams) child.getLayoutParams();
+            final FlingAppBarLayout.LayoutParams childLp = (FlingAppBarLayout.LayoutParams) child.getLayoutParams();
             final Interpolator interpolator = childLp.getScrollInterpolator();
 
             if (absOffset >= child.getTop() && absOffset <= child.getBottom()) {
                 if (interpolator != null) {
                     int childScrollableHeight = 0;
                     final int flags = childLp.getScrollFlags();
-                    if ((flags & AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL) != 0) {
+                    if ((flags & FlingAppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL) != 0) {
                         // We're set to scroll so add the child's height plus margin
                         childScrollableHeight += child.getHeight() + childLp.topMargin
                                 + childLp.bottomMargin;
 
-                        if ((flags & AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED) != 0) {
+                        if ((flags & FlingAppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED) != 0) {
                             // For a collapsing scroll, we to take the collapsed height
                             // into account.
                             childScrollableHeight -= ViewCompat.getMinimumHeight(child);
@@ -379,7 +379,7 @@ public class AppBarLayoutSpringBehavior extends AppBarLayout.Behavior {
         return offset;
     }
 
-    private boolean shouldJumpElevationState(CoordinatorLayout parent, AppBarLayout layout) {
+    private boolean shouldJumpElevationState(CoordinatorLayout parent, FlingAppBarLayout layout) {
         // We should jump the elevated state if we have a dependent scrolling view which has
         // an overlapping top (i.e. overlaps us)
         final List<View> dependencies = parent.getDependents(layout);
@@ -389,14 +389,14 @@ public class AppBarLayoutSpringBehavior extends AppBarLayout.Behavior {
                     (CoordinatorLayout.LayoutParams) dependency.getLayoutParams();
             final CoordinatorLayout.Behavior behavior = lp.getBehavior();
 
-            if (behavior instanceof AppBarLayout.ScrollingViewBehavior) {
-                return ((AppBarLayout.ScrollingViewBehavior) behavior).getOverlayTop() != 0;
+            if (behavior instanceof FlingAppBarLayout.ScrollingViewBehavior) {
+                return ((FlingAppBarLayout.ScrollingViewBehavior) behavior).getOverlayTop() != 0;
             }
         }
         return false;
     }
 
-    private static View getAppBarChildOnOffset(final AppBarLayout layout, final int offset) {
+    private static View getAppBarChildOnOffset(final FlingAppBarLayout layout, final int offset) {
         final int absOffset = Math.abs(offset);
         for (int i = 0, z = layout.getChildCount(); i < z; i++) {
             final View child = layout.getChildAt(i);
@@ -407,13 +407,13 @@ public class AppBarLayoutSpringBehavior extends AppBarLayout.Behavior {
         return null;
     }
 
-    private void updateSpringOffsetByscroll(CoordinatorLayout coordinatorLayout, AppBarLayout appBarLayout, int offset) {
+    private void updateSpringOffsetByscroll(CoordinatorLayout coordinatorLayout, FlingAppBarLayout appBarLayout, int offset) {
         if (mSpringRecoverAnimator != null && mSpringRecoverAnimator.isRunning())
             mSpringRecoverAnimator.cancel();
         updateSpringHeaderHeight(coordinatorLayout, appBarLayout, offset);
     }
 
-    private void updateSpringHeaderHeight(CoordinatorLayout coordinatorLayout, AppBarLayout appBarLayout, int offset) {
+    private void updateSpringHeaderHeight(CoordinatorLayout coordinatorLayout, FlingAppBarLayout appBarLayout, int offset) {
         if (appBarLayout.getHeight() < mPreHeadHeight || offset < 0) return;
         mOffsetSpring = offset;
         if (mSpringOffsetCallback != null) mSpringOffsetCallback.springCallback(mOffsetSpring);
@@ -441,23 +441,23 @@ public class AppBarLayoutSpringBehavior extends AppBarLayout.Behavior {
     }
 
     private void updateAppBarLayoutDrawableState(final CoordinatorLayout parent,
-                                                 final AppBarLayout layout, final int offset, final int direction,
+                                                 final FlingAppBarLayout layout, final int offset, final int direction,
                                                  final boolean forceJump) {
         final View child = getAppBarChildOnOffset(layout, offset);
         if (child != null) {
-            final AppBarLayout.LayoutParams childLp = (AppBarLayout.LayoutParams) child.getLayoutParams();
+            final FlingAppBarLayout.LayoutParams childLp = (FlingAppBarLayout.LayoutParams) child.getLayoutParams();
             final int flags = childLp.getScrollFlags();
             boolean collapsed = false;
 
-            if ((flags & AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL) != 0) {
+            if ((flags & FlingAppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL) != 0) {
                 final int minHeight = ViewCompat.getMinimumHeight(child);
 
-                if (direction > 0 && (flags & (AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
-                        | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED)) != 0) {
+                if (direction > 0 && (flags & (FlingAppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
+                        | FlingAppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED)) != 0) {
                     // We're set to enter always collapsed so we are only collapsed when
                     // being scrolled down, and in a collapsed offset
                     collapsed = -offset >= child.getBottom() - minHeight - layout.getTopInset();
-                } else if ((flags & AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED) != 0) {
+                } else if ((flags & FlingAppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED) != 0) {
                     // We're set to exit until collapsed, so any offset which results in
                     // the minimum height (or less) being shown is collapsed
                     collapsed = -offset >= child.getBottom() - minHeight - layout.getTopInset();
