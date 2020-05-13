@@ -13,7 +13,6 @@ import com.google.android.material.animation.AnimationUtils;
 
 import java.util.List;
 
-import androidx.annotation.VisibleForTesting;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.view.ViewCompat;
 
@@ -302,7 +301,7 @@ public class AppBarLayoutSpringBehavior extends AppBarLayout.Behavior {
                 if (!offsetChanged && appBarLayout.hasChildWithInterpolator()) {
                     coordinatorLayout.dispatchDependentViewsChanged(appBarLayout);
                 }
-                appBarLayout.dispatchOffsetUpdates(getTopAndBottomOffset());
+                appBarLayout.offsetTopAndBottom(getTopAndBottomOffset());
                 updateAppBarLayoutDrawableState(coordinatorLayout, appBarLayout, newOffset,
                         newOffset < curOffset ? -1 : 1, false);
             } else if (curOffset != minOffset) {
@@ -435,7 +434,6 @@ public class AppBarLayoutSpringBehavior extends AppBarLayout.Behavior {
         mSpringOffsetCallback = springOffsetCallback;
     }
 
-    @VisibleForTesting
     boolean isOffsetAnimatorRunning() {
         return mOffsetAnimator != null && mOffsetAnimator.isRunning();
     }
